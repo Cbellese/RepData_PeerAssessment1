@@ -1,20 +1,82 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Peer Assignment 1 - Reproducible Research"
+date: "Sunday, August 17, 2014"
+output: html_document
+---
+Loading and preprocessing the data
+
+```{r}
+
+  d <-"C://Users//bellechr//Downloads//RStudio//_OnWork//PeerAssestment1"
+  setwd(d)
+  print (paste("Working Directory =",getwd()))
+  
+  cFileName<-"activity.csv"
+  x <- read.csv(cFileName)
+  View(x)
+
+```
+What is mean total number of steps taken  per day?
+1.  Make a histogram of the total number of steps taken each day
+```{r, echo=FALSE}
+  totStepsPerDays <- tapply(x$steps, x$date, sum)
+  avgSteps <- tapply(x$steps, x$date, mean)
+  medSteps <- tapply(x$steps, x$date, median)
+  barplot(totStepsPerDays)
+
+```
+2. calculate and report the mean and median total number of steps taken per day
+```{r, echo=FALSE}
+  avgSteps
+  medSteps
+```
+What is the average daily activity pattern?
+
+1. Make a time series plot(i.e type="l") of the  5-minute interval (x-axis) and the average number
+of steps taken, averaged across all day (y-axis)
+
+2. Which 5-minute interval, on avetage across all the days in the dataset, contains the maximum number of steps?
+```{r, echo=FALSE}
+
+  rx <- as.Date("2012-10-01")
+  y0 <- data.frame((as.Date(x$date)- as.Date(rx))+1, x)
+  names(y0) <-c("index", "steps", "date", "interval")  
+  y <- data.frame(y0, y0$index*y0$interval)
+  names(y) <-c("index", "steps", "date", "interval","timeseries")
+
+  mx <- max(y$steps, na.rm=TRUE)
+  mx
+
+  rowMaxNo <-subset(y,y$steps==mx)
+  rowMaxNo
 
 
-## Loading and preprocessing the data
+```
+Imputing missing values
+toDo
+
+Are there differences in activity patterns between weekdays and weekends?
+1. Create a new factor variable in the dataset with two levels -"weekday" and "weekend" indicating 
+whether a given date is a weekday or weekend day
+
+2. Make a panel plot containing a time series plot of the 5-minutes interval (x-axis) and 
+the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
+
+
+```{r, echo=FALSE}
+  weekend <- c("Saturday","Sunday")
+  z <- data.frame(y, weekdays(as.Date(y$date),abbreviate=FALSE),weekdays(as.Date(y$date),abbreviate=FALSE) %in% weekend)
+  names(z) <-c("index", "steps", "date", "interval", "timeseries","dayName","isWeekend")  
+  
+  zWeekend <- subset(z,z$isWeekend==TRUE)
+  zWeekday <- subset(z,z$isWeekend==FALSE)
+  totStepsPerWeekend <- tapply(zWeekend$steps, zWeekend$date, sum)
+  totStepsPerWeekday <- tapply(zWeekday$steps, zWeekday$date, sum)
+  plot(totStepsPerWeekend, type="o")
+  plot(totStepsPerWeekday,type="o")
+
+
+```
 
 
 
-## What is mean total number of steps taken per day?
-
-
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
